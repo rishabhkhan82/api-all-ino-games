@@ -1,11 +1,6 @@
 RewriteEngine On
-RewriteBase /backend/
 
-# CORS headers
-Header always set Access-Control-Allow-Origin "*"
-Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
-Header always set Access-Control-Allow-Headers "Content-Type, Authorization"
-
+# CORS headers handled by PHP in index.php
 # Handle API routing, return all requests to index.php if not a file or directory
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

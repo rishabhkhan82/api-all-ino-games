@@ -1,5 +1,27 @@
 <?php
 
+if (getConfig('app.env') === 'development') {
+    header('Access-Control-Allow-Origin: *');
+} else {
+    $corsConfig = getConfig('cors');
+    $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+    if (in_array($origin, $corsConfig['allowed_origins'])) {
+        header('Access-Control-Allow-Origin: ' . $origin);
+    }
+}
+
+$corsConfig = getConfig('cors');
+header('Access-Control-Allow-Methods: ' . implode(', ', $corsConfig['allowed_methods']));
+header('Access-Control-Allow-Headers: ' . implode(', ', $corsConfig['allowed_headers']));
+header('Access-Control-Expose-Headers: ' . implode(', ', $corsConfig['exposed_headers']));
+header('Access-Control-Max-Age: ' . $corsConfig['max_age']);
+header('Content-Type: application/json');
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
 function getJsonInput(): array {
     $data = json_decode(file_get_contents('php://input'), true);
     return is_array($data) ? $data : [];

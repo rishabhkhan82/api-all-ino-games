@@ -1,22 +1,22 @@
 <?php
 
 // Database configuration constants (old local settings)
-// define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
-// define('DB_PORT', getenv('DB_PORT') ?: 3307);
-// define('DB_NAME', getenv('DB_NAME') ?: 'orange_city_games');
-// define('DB_USER', getenv('DB_USER') ?: 'root');
-// define('DB_PASS', getenv('DB_PASS') ?: '');
+define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
+define('DB_PORT', getenv('DB_PORT') ?: 3307);
+define('DB_NAME', getenv('DB_NAME') ?: 'orange_city_games');
+define('DB_USER', getenv('DB_USER') ?: 'root');
+define('DB_PASS', getenv('DB_PASS') ?: '');
 
 // InfinityFree database credentials
-define('DB_HOST', 'sql304.infinityfree.com');
-define('DB_PORT', 3306);
-define('DB_NAME', 'if0_41776473_all_ino_games_db');
-define('DB_USER', 'if0_41776473');
-define('DB_PASS', 'GweoD2kaHwrG');
-define('DB_CHARSET', 'utf8mb4');
+// define('DB_HOST', 'sql304.infinityfree.com');
+// define('DB_PORT', 3306);
+// define('DB_NAME', 'if0_41776473_all_ino_games_db');
+// define('DB_USER', 'if0_41776473');
+// define('DB_PASS', 'GweoD2kaHwrG');
 
 // JWT configuration
 define('JWT_SECRET', getenv('JWT_SECRET') ?: 'your-jwt-secret-key-here');
+define('DB_CHARSET', 'utf8mb4');
 
 // Application configuration
 define('APP_ENV', getenv('APP_ENV') ?: 'development');
@@ -96,7 +96,7 @@ function getConfig(string $key, $default = null) {
             ],
 
             'cors' => [
-                'allowed_origins' => ['http://localhost:4200', 'http://localhost:3000', 'http://localhost'],
+                'allowed_origins' => ['http://localhost:4200', 'http://localhost:3000', 'http://localhost', 'https://all-ino-games.wuaze.com'],
                 'allowed_methods' => ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
                 'allowed_headers' => ['Content-Type', 'Authorization', 'X-Requested-With'],
                 'exposed_headers' => ['Authorization'],

@@ -1,5 +1,27 @@
 <?php
 
+if (getConfig('app.env') === 'development') {
+    header('Access-Control-Allow-Origin: *');
+} else {
+    $corsConfig = getConfig('cors');
+    $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+    if (in_array($origin, $corsConfig['allowed_origins'])) {
+        header('Access-Control-Allow-Origin: ' . $origin);
+    }
+}
+
+$corsConfig = getConfig('cors');
+header('Access-Control-Allow-Methods: ' . implode(', ', $corsConfig['allowed_methods']));
+header('Access-Control-Allow-Headers: ' . implode(', ', $corsConfig['allowed_headers']));
+header('Access-Control-Expose-Headers: ' . implode(', ', $corsConfig['exposed_headers']));
+header('Access-Control-Max-Age: ' . $corsConfig['max_age']);
+header('Content-Type: application/json');
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
 function getJsonInput(): array {
     $data = json_decode(file_get_contents('php://input'), true);
     return is_array($data) ? $data : [];
@@ -42,7 +64,7 @@ function getGameTypeFromInput(array $input): int {
 }
 
 function buildGameSelectFields(): string {
-    return 'id, name, game_type AS gameType, active, open_time, open_number, close_time, close_number, created_at';
+    return 'id, name, game_type AS gameType, active, open_time, open_number, close_time, close_number, final_number, created_at';
 }
 
 function findActiveGame(PDO $pdo, ?int $gameType = null): ?array {
@@ -252,13 +274,7 @@ function handleStartGame(): void {
 }
 
 function handleEndGame(): void {
-    $openNumber = $_GET['openNumber'] ?? null;
-    $closeNumber = $_GET['closeNumber'] ?? null;
     $gameType = getIntQuery('type', null);
-
-    if (!$openNumber || !$closeNumber) {
-        jsonResponse(['error' => 'Both openNumber and closeNumber are required'], 400);
-    }
 
     $pdo = getDBConnection();
     $game = findActiveGame($pdo, $gameType);
@@ -268,8 +284,8 @@ function handleEndGame(): void {
     }
 
     try {
-        $stmt = $pdo->prepare('UPDATE games SET open_number = ?, close_number = ?, close_time = NOW(), active = 0 WHERE id = ?');
-        $stmt->execute([$openNumber, $closeNumber, $game['id']]);
+        $stmt = $pdo->prepare('UPDATE games SET active = 0 WHERE id = ?');
+        $stmt->execute([$game['id']]);
         handleGetGame((int)$game['id']);
     } catch (PDOException $e) {
         jsonResponse(['error' => 'Database error'], 500);
@@ -316,7 +332,31 @@ function handleSetCloseNumber(): void {
     }
 
     try {
-        $stmt = $pdo->prepare('UPDATE games SET close_number = ?, close_time = NOW(), active = 0 WHERE id = ?');
+        $stmt = $pdo->prepare('UPDATE games SET close_number = ?, close_time = NOW() WHERE id = ?');
+        $stmt->execute([$number, $game['id']]);
+        handleGetGame((int)$game['id']);
+    } catch (PDOException $e) {
+        jsonResponse(['error' => 'Database error'], 500);
+    }
+}
+
+function handleSetFinalNumber(): void {
+    $number = $_GET['number'] ?? null;
+    $gameType = getIntQuery('type', null);
+
+    if (!$number) {
+        jsonResponse(['error' => 'Number is required'], 400);
+    }
+
+    $pdo = getDBConnection();
+    $game = findActiveGame($pdo, $gameType);
+
+    if (!$game) {
+        jsonResponse(['error' => 'No active game found'], 404);
+    }
+
+    try {
+        $stmt = $pdo->prepare('UPDATE games SET final_number = ? WHERE id = ?');
         $stmt->execute([$number, $game['id']]);
         handleGetGame((int)$game['id']);
     } catch (PDOException $e) {

@@ -3,9 +3,23 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization');
+require_once __DIR__ . '/config.php';
+
+if (getConfig('app.env') === 'development') {
+    header('Access-Control-Allow-Origin: *');
+} else {
+    $corsConfig = getConfig('cors');
+    $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+    if (in_array($origin, $corsConfig['allowed_origins'])) {
+        header('Access-Control-Allow-Origin: ' . $origin);
+    }
+}
+
+$corsConfig = getConfig('cors');
+header('Access-Control-Allow-Methods: ' . implode(', ', $corsConfig['allowed_methods']));
+header('Access-Control-Allow-Headers: ' . implode(', ', $corsConfig['allowed_headers']));
+header('Access-Control-Expose-Headers: ' . implode(', ', $corsConfig['exposed_headers']));
+header('Access-Control-Max-Age: ' . $corsConfig['max_age']);
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -27,9 +41,11 @@ if ($path === null || $path === '') {
 // Remove leading and trailing slashes
 $path = trim($path, '/');
 
-// Handle cases where index.php might be in a subdirectory on InfinityFree
+// Handle cases where index.php might be in a subdirectory on InfinityFree or local
 // Remove 'backend/' if it appears in the path
 $path = preg_replace('|^backend/|', '', $path);
+// Remove 'orange-city-games/api/api-all-ino-games/' for local development
+$path = preg_replace('|^orange-city-games/api/api-all-ino-games/|', '', $path);
 // Remove 'index.php' if it appears in the path
 $path = preg_replace('|^index\.php/|', '', $path);
 $path = preg_replace('|^index\.php$|', '', $path);
@@ -80,6 +96,9 @@ try {
     } elseif ($path === 'api/admin/game/setClose' && $requestMethod === 'POST') {
         require_once __DIR__ . '/api/games.php';
         handleSetCloseNumber();
+    } elseif ($path === 'api/admin/game/setFinal' && $requestMethod === 'POST') {
+        require_once __DIR__ . '/api/games.php';
+        handleSetFinalNumber();
     } elseif ($path === 'api/admin/games' && $requestMethod === 'GET') {
         require_once __DIR__ . '/api/games.php';
         handleGetGames();

@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS `games` (
   `open_number` varchar(10) DEFAULT NULL,
   `close_time` timestamp NULL DEFAULT NULL,
   `close_number` varchar(10) DEFAULT NULL,
+  `final_number` varchar(10) DEFAULT NULL,
   `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
