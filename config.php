@@ -1,18 +1,18 @@
 <?php
 
 // Database configuration constants (old local settings)
-define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
-define('DB_PORT', getenv('DB_PORT') ?: 3307);
-define('DB_NAME', getenv('DB_NAME') ?: 'orange_city_games');
-define('DB_USER', getenv('DB_USER') ?: 'root');
-define('DB_PASS', getenv('DB_PASS') ?: '');
+// define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
+// define('DB_PORT', getenv('DB_PORT') ?: 3307);
+// define('DB_NAME', getenv('DB_NAME') ?: 'orange_city_games');
+// define('DB_USER', getenv('DB_USER') ?: 'root');
+// define('DB_PASS', getenv('DB_PASS') ?: '');
 
 // InfinityFree database credentials
-// define('DB_HOST', 'sql304.infinityfree.com');
-// define('DB_PORT', 3306);
-// define('DB_NAME', 'if0_41776473_all_ino_games_db');
-// define('DB_USER', 'if0_41776473');
-// define('DB_PASS', 'GweoD2kaHwrG');
+define('DB_HOST', 'sql304.infinityfree.com');
+define('DB_PORT', 3306);
+define('DB_NAME', 'if0_41776473_allinowin_db');
+define('DB_USER', 'if0_41776473');
+define('DB_PASS', 'GweoD2kaHwrG');
 
 // JWT configuration
 define('JWT_SECRET', getenv('JWT_SECRET') ?: 'your-jwt-secret-key-here');
