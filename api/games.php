@@ -264,7 +264,8 @@ function handleStartGame(): void {
     }
 
     try {
-        $stmt = $pdo->prepare('INSERT INTO games (name, active, game_type, created_at) VALUES (?, ?, ?, NOW())');
+        // let DB default CURRENT_TIMESTAMP handle created_at and ensure session timezone is set in PDO
+        $stmt = $pdo->prepare('INSERT INTO games (name, active, game_type) VALUES (?, ?, ?)');
         $stmt->execute([getGameTypeName($gameType), 1, $gameType]);
         $id = (int)$pdo->lastInsertId();
         handleGetGame($id);
